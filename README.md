@@ -1,13 +1,23 @@
 # Reinforcement_learning_apps
 
+#### Mountain Car Problem:
+
+![MountainCar](MountainCar.jpeg)
+
+A car is on a one-dimensional track, positioned between two "mountains". The goal is to drive up the mountain on the right; however, the car's engine is not strong enough to scale the mountain in a single pass. Therefore, the only way to succeed is to drive back and forth to build up momentum
+
 ##### install dependencies:
 
 ```
 $ pip install -r requirements.txt
 ```
+
+#### Qlearnig:
+
 ##### Train and save the agent:
 
 ```
+$ cd ./QLearning
 $ python3 Q_learning.py
 ```
 
@@ -15,4 +25,13 @@ $ python3 Q_learning.py
 
 ```
 $ python3 test_Qtable.py
+```
+
+#### Deep Qlearning:
+
+##### Train and save the agent:
+
+```
+$ cd ./DQN
+$ python3 main.py
 ```
