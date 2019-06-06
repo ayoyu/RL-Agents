@@ -7,7 +7,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 
-SHOW_EVERY = 500
+SHOW_EVERY = 100
 
 class DNN:
 
@@ -22,20 +22,20 @@ class DNN:
 
 	def build(self):
 		model = Sequential()
-		model.add(Dense(units=50, input_shape=(self.nbr_feature,),
+		model.add(Dense(units=20, input_shape=(self.nbr_feature,),
 			use_bias=True, kernel_initializer='glorot_uniform', activation='relu'))
 		for units in self.hidden_units:
 			model.add(Dense(units=units, use_bias=True,
 				kernel_initializer='glorot_uniform', activation='relu'))
-		model.add(Dense(units=self.output_shape, activation='linear', use_bias=True, kernel_initializer='glorot_uniform'))		
-		model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate))
+		model.add(Dense(units=self.output_shape, use_bias=True, kernel_initializer='glorot_uniform', activation='linear'))		
+		model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate), metrics=['accuracy'])
 		return model
 
 
 class DQN:
 
 	def __init__(self, dim_obs_space, dim_action_space, learning_rate,
-		hidden_units, gamma, batch):
+		hidden_units, gamma, batch, epochs):
 
 		self.dim_obs_space = dim_obs_space
 		self.dim_action_space = dim_action_space
@@ -43,6 +43,7 @@ class DQN:
 		self.hidden_units = hidden_units
 		self.gamma = gamma
 		self.batch = batch
+		self.epochs = epochs
 		Network = DNN(learning_rate, hidden_units, dim_obs_space, dim_action_space)
 		self.model = Network.model_structure
 		self.memory = list()
@@ -53,7 +54,7 @@ class DQN:
 
 
 	def take_action(self, state, epsilon):
-
+		state = np.reshape(state, (1, state.shape[0]))
 		if np.random.random() <= epsilon:
 			action = np.random.randint(0, self.dim_action_space)
 		else:
@@ -65,23 +66,30 @@ class DQN:
 		if len(self.memory) < self.batch:
 			return
 		else:
+			
 			mini_batch_data = random.sample(self.memory, self.batch)
+			X_train = list()
+			y_train = list()
 			for args in mini_batch_data:
 				state, action, next_state, reward, done = args
 				max_future_reward = reward
 				if not done:
+					next_state = np.reshape(next_state, (1, next_state.shape[0]))
 					max_future_reward = reward + self.gamma * np.max(self.model.predict(next_state)[0])
-				
-				Q_value = self.model.predict(state)[0]
-				Q_value[action] = max_future_reward
-				Q_value = np.reshape(Q_value, (1, Q_value.shape[0]))
-				self.model.fit(state, Q_value)
+				Q_value = self.model.predict(np.reshape(state, (1, state.shape[0])))
+				Q_value[0][action] = max_future_reward
+				y_train.append(np.reshape(Q_value, (Q_value.shape[1],)).tolist())
+				X_train.append(state.tolist())
+			
+			X_train = np.array(X_train)
+			y_train = np.array(y_train)	
+			self.model.fit(X_train, y_train, epochs=self.epochs)
 
 
 class AI_Agent:
 
 	def __init__(self, env, episodes, learning_rate, hidden_units,
-		gamma, epsilon, bacth):
+		gamma, epsilon, bacth, epochs):
 
 		self.env = env
 		self.episodes = episodes
@@ -90,10 +98,11 @@ class AI_Agent:
 		self.epsilon = epsilon
 		self.gamma = gamma
 		self.bacth = bacth
+		self.epochs = epochs
 		dim_obs_space = env.observation_space.shape[0]
 		dim_action_space = env.action_space.n
 		self.DQN_agent = DQN(dim_obs_space, dim_action_space, learning_rate, hidden_units,
-			gamma, bacth)
+			gamma, bacth, epochs)
 		self.rewards = list()
 
 
@@ -104,22 +113,19 @@ class AI_Agent:
 
 		for episode in range(0, self.episodes):
 			state = self.env.reset()
-			state = np.reshape(state, (1, state.shape[0]))
 			done = False
 			reward_ep = 0
 			while not done:
 				action = self.DQN_agent.take_action(state, self.epsilon)
 				next_state, reward, done, _ = self.env.step(action)
 				reward_ep += reward
-				next_state = np.reshape(next_state, (1, next_state.shape[0]))
 				self.DQN_agent.add_to_memory(state, action, next_state, reward, done)
 				state = next_state
-				if episode % SHOW_EVERY == 0:
-					self.env.render()
+				self.env.render()
 				if not done:
 					self.DQN_agent.fit_policy()
-				elif state[0][0] >= self.env.goal_position:
-					print(f"we made it at episode {episode}")
+				elif state[0] >= self.env.goal_position:
+					print(f"-------------------------we made it at episode {episode}------------------------------")
 			self.rewards.append(reward_ep)
 			self.epsilon -= decay_value
 		self.env.close()
