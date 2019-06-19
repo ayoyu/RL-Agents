@@ -28,7 +28,7 @@ class DNN:
 			model.add(Dense(units=units, use_bias=True,
 				kernel_initializer='glorot_uniform', activation='relu'))
 		model.add(Dense(units=self.output_shape, use_bias=True, kernel_initializer='glorot_uniform', activation='linear'))		
-		model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate), metrics=['accuracy'])
+		model.compile(loss="mse", optimizer=Adam(lr=self.learning_rate), metrics=['mse'])
 		return model
 
 
