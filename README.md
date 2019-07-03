@@ -62,3 +62,10 @@ $ python3 main.py
 $ cd ./MonteCarloTreeSearch
 $ python3 MCTS.py
 ```
+
+#### REINFORCE (Policy Gradient):
+```
+$ cd ./REINFORCE
+$ python3 main.py
+```
+
