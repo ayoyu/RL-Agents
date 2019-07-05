@@ -6,7 +6,7 @@ In this Project i will try to solve some gym environements with reinforcement le
 - Deep Qlearning (Q_network & Q_target)
 - Monte Carlot Tree Search 
 - REINFORCE (Policy gradient)
-- Advantage actor critic
+- Advantage actor critic (A2C)
 - CrossEntropy & Deep CrossEntropy
 - Value iteration in a Markov Decision Process
 
@@ -66,6 +66,12 @@ $ python3 MCTS.py
 #### REINFORCE (Policy Gradient):
 ```
 $ cd ./REINFORCE
+$ python3 main.py
+```
+
+#### Advantage actor critic (A2C):
+```
+$ cd ./Advantage_Actor_Critic
 $ python3 main.py
 ```
 
