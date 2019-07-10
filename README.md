@@ -48,7 +48,7 @@ $ python3 Q_learning.py
 $ python3 test_Qtable.py
 ```
 
-#### Deep Qlearning (Q_neatwork):
+#### Deep Qlearning (Q_network, Q_target, ExperienceReplay):
 
 ##### Train and save the agent:
 
