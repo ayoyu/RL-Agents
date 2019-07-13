@@ -4,10 +4,11 @@ import numpy as np
 
 class A2CAgent:
 
-	def __init__(self, obs_shape, n_action, gamma=0.99):
+	def __init__(self, obs_shape, n_action, save_steps, gamma=0.99):
 
 		self.obs_shape = obs_shape
 		self.n_action = n_action
+		self.save_steps = save_steps
 		g = tf.Graph()
 		with g.as_default():
 			with tf.variable_scope('Placeholders'):
@@ -39,7 +40,7 @@ class A2CAgent:
 				next_state_value = next_state_value * (1 - self.is_done)
 
 				logits = tf.add(tf.matmul(hidden, W_logits), b_logits)
-				self.policy = tf.nn.softmax(logits)
+				self.policy = tf.nn.softmax(logits, name='Policy')
 				log_policy = tf.nn.log_softmax(logits)
 				Advantage = self.reward + gamma * next_state_value - state_value
 				J = tf.reduce_mean(tf.reduce_sum(log_policy * tf.one_hot(self.actions, n_action), axis=1) * tf.stop_gradient(Advantage))
@@ -50,6 +51,7 @@ class A2CAgent:
 				weights = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
 				self.optimizer = tf.train.AdamOptimizer().minimize(loss, var_list=weights)
 			self.init = tf.global_variables_initializer()
+			self.saver = tf.train.Saver()
 		self.sess = tf.Session(graph=g)
 
 
@@ -67,6 +69,14 @@ class A2CAgent:
 		self.is_done: done
 		}
 		self.sess.run(self.optimizer, feed_dict=feed_dict)
+
+
+	def save_model(self):
+		self.saver.save(self.sess, 'a2C_agent', global_step=self.save_steps)
+
+
+	def load_model(self):
+		self.saver.restore(self.sess, f'a2C_agent-{self.save_steps}')
 
 
 def generate_session(env, agent, t_max=1000):
