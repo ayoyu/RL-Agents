@@ -1,6 +1,6 @@
 # Reinforcement_learning_apps
 
-In this Project i will try to solve some gym environements with reinforcement learning algorithms:
+In this Project i will try to solve some gym environements with some reinforcement learning algorithms:
 - Qlearning (table version)
 - Deep Qlearning (Q_network)
 - Deep Qlearning (Q_network & Q_target)
@@ -38,14 +38,13 @@ $ pip install -r requirements.txt
 ##### Train and save the agent:
 
 ```
-$ cd ./QLearning
-$ python3 Q_learning.py
+$ python3 ./QLearning/Q_learning.py
 ```
 
 ##### load the agent and make decision for a given state:
 
 ```
-$ python3 test_Qtable.py
+$ python3 ./QLearning/test_Qtable.py
 ```
 
 #### Deep Qlearning (Q_network, Q_target, ExperienceReplay):
@@ -53,25 +52,20 @@ $ python3 test_Qtable.py
 ##### Train and save the agent:
 
 ```
-$ cd ./DQN
-$ python3 main.py
+$ python3 ./DQN/main.py
 ```
 
 #### Monte Carlo Tree Search:
 ```
-$ cd ./MonteCarloTreeSearch
-$ python3 MCTS.py
+$ python3 ./MonteCarloTreeSearch/MCTS.py
 ```
 
 #### REINFORCE (Policy Gradient):
 ```
-$ cd ./REINFORCE
-$ python3 main.py
+$ python3 ./REINFORCE/main.py
 ```
 
 #### Advantage actor critic (A2C):
 ```
-$ cd ./Advantage_Actor_Critic
-$ python3 main.py
+$ python3 ./Advantage_Actor_Critic/main.py
 ```
-
