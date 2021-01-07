@@ -147,13 +147,13 @@ if __name__ == '__main__':
 	plan_mcts(root, n_iter=1000)
 	test_env = pickle.loads(root_snapshot) # env used to show progress
 	total_reward = 0
-	for i in count():
+	while True:
 
 		children = list(root.children)
 		best_child = children[np.argmax([child.get_mean_value() for child in children])]
 
 		s, r, done, _ = test_env.step(best_child.action)
-		
+		print(f"current reward: {r} | total_reward: {total_reward}")
 		test_env.render()
 		assert (best_child.obs == s).all()
 		total_reward += r
@@ -174,7 +174,3 @@ if __name__ == '__main__':
 		best_leaf = root.expand()
 		child_value = root.rollout()
 		root.back_propagate(child_value)
-	
-
-
-
