@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np 
 
 
-class A2CAgent:
+class AdvantageActorCritic:
 
 	def __init__(self, obs_shape, n_action, save_steps, gamma=0.99):
 
@@ -71,15 +71,18 @@ class A2CAgent:
 		self.sess.run(self.optimizer, feed_dict=feed_dict)
 
 
-	def save_model(self):
-		self.saver.save(self.sess, 'a2C_agent', global_step=self.save_steps)
+	def save_model(self, path):
+		self.saver.save(self.sess, path+"/a2c_agent", global_step=self.save_steps)
 
 
-	def load_model(self):
-		self.saver.restore(self.sess, f'a2C_agent-{self.save_steps}')
+	def load_model(self, path):
+		self.saver.restore(self.sess, f"{path}/a2c_agent-{self.save_steps}")
 
 
 def generate_session(env, agent, t_max=1000):
+	"""
+	Simulation of an episode(trajectory)
+	"""
 	s = env.reset()
 	sum_rewards = 0
 	for _ in range(t_max):

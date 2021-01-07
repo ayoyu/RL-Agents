@@ -1,30 +1,12 @@
 import gym
 import numpy as np
 import pickle
-import os
+from tqdm import tqdm
 
 
-env = gym.make('MountainCar-v0')
-# print(env.action_space)
-# print(env.observation_space)
-# print(env.observation_space.low)
-# print(env.observation_space.high)
-# print(env._max_episode_steps)
-# print(env.goal_position)
-# print(env.action_space.n)
-# print(dir(env))
-"""
-Discrete(3)
-Box(2,)
-[-1.2  -0.07]
-[0.6  0.07]
-200
-0.5
-
-"""
-
-class Q_learning:
-	def __init__(self, env, learning_rate, discount_rate, episodes, epsilon, discretize_count, show):
+class QAgent:
+	def __init__(self, env, learning_rate, discount_rate, episodes,
+		epsilon, discretize_count, show):
 		
 		self.env = env
 		self.learning_rate = learning_rate
@@ -48,7 +30,7 @@ class Q_learning:
 		start_decay_epsilon = 1
 		end_decay_epsilon = self.episodes // 4
 		decay_value = self.epsilon / (end_decay_epsilon - start_decay_epsilon)
-		for episode in range(0, self.episodes):
+		for episode in tqdm(range(0, self.episodes)):
 			state = self.env.reset()
 			discret_state = self.get_discretize_state(state)
 			done = False
@@ -71,8 +53,8 @@ class Q_learning:
 					current_q = self.q_table[discret_state + (action, )]
 					q_value = (1 - self.learning_rate) * current_q + self.learning_rate * (reward + self.discount_rate * max_future_reward)
 					self.q_table[discret_state + (action,)] = q_value
-				elif new_state[0] >= self.env.goal_position:
-					print(f"Made it at {episode} episode")
+				# elif new_state[0] >= self.env.goal_position:
+				# 	print(f"Made it at {episode} episode")
 
 				discret_state = discret_new_state
 			self.epsilon -= decay_value
@@ -84,31 +66,3 @@ class Q_learning:
 		discret_state = self.get_discretize_state(given_state)
 		action = np.argmax(self.q_table[discret_state])
 		return action
-
-
-if __name__ == '__main__':
-	current_dir = os.path.dirname(os.path.realpath(__file__))
-	Model = Q_learning(env, 0.1, 0.95, 7000, 0.1, 10, 500)
-	Model.train()
-	with open(os.path.join(current_dir, 'Q_table.pkl'), 'wb') as file:
-		pickle.dump(Model, file)
-
-
-
-
-			
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

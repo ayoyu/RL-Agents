@@ -1,2 +1,4 @@
 __pycache__/
 .ipynb_checkpoints
+Advantage_Actor_Critic/a2c_*
+Advantage_Actor_Critic/checkpoint
