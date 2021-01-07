@@ -1,14 +1,18 @@
+import os
 import numpy as np 
-from A2C import A2CAgent
+from A2C import AdvantageActorCritic
 import gym
 import tensorflow as tf 
+
 
 env = gym.make("CartPole-v0").env
 n_action = env.action_space.n 
 state_shape = env.observation_space.shape
 steps = 100
-agent = A2CAgent(state_shape, n_action, steps)
-agent.load_model()
+agent = AdvantageActorCritic(state_shape, n_action, steps)
+load_path = os.path.join(os.path.dirname(__file__))
+agent.load_model(load_path)
+
 
 def play_game(env, agent, t_max=1000):
 	s = env.reset()
@@ -17,9 +21,11 @@ def play_game(env, agent, t_max=1000):
 		proba = agent.get_action_proba(s)
 		action = np.random.choice(range(agent.n_action), p=proba)
 		next_s, r, done, _ = env.step(action)
+		env.render()
 		sum_rewards += r
 		s = next_s
 		if done: break
+	env.close()
 	return sum_rewards
 
 
