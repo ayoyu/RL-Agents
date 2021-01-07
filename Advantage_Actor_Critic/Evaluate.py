@@ -2,7 +2,8 @@ import os
 import numpy as np 
 from A2C import AdvantageActorCritic
 import gym
-import tensorflow as tf 
+import tensorflow as tf
+from tqdm import tqdm 
 
 
 env = gym.make("CartPole-v0").env
@@ -17,7 +18,7 @@ agent.load_model(load_path)
 def play_game(env, agent, t_max=1000):
 	s = env.reset()
 	sum_rewards = 0
-	for _ in range(t_max):
+	for _ in tqdm(range(t_max)):
 		proba = agent.get_action_proba(s)
 		action = np.random.choice(range(agent.n_action), p=proba)
 		next_s, r, done, _ = env.step(action)
@@ -32,7 +33,7 @@ def play_game(env, agent, t_max=1000):
 def evaluate(env, agent):
 	steps = agent.save_steps
 	sum_reward = 0
-	for _ in range(steps):
+	for _ in tqdm(range(steps)):
 		r = play_game(env, agent)
 		sum_reward += r
 	return sum_reward / steps
