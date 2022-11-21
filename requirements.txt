@@ -2,6 +2,6 @@ gym==0.12.5
 Keras==2.2.4
 matplotlib==3.1.0
 numpy==1.16.4
-tensorflow==1.13.1
+tensorflow==2.9.3
 opencv-python==4.1.0.25
 tqdm==4.55.1
